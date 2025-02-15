@@ -114,3 +114,34 @@ class ProfileForm(BaseUploadProfileForm):
             file.FileAllowed(["png", "jpg", "jpeg"], "Only jpg and png are allowed"),
         ],
     )
+
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, FloatField, SubmitField
+from wtforms.validators import DataRequired, NumberRange
+
+
+class PlaceForm(FlaskForm):
+    name = StringField("ชื่อสถานที่", validators=[DataRequired()])
+    description = TextAreaField("คำอธิบาย")
+    image = StringField("URL รูปภาพ", validators=[DataRequired()])
+    rating = FloatField(
+        "คะแนนดาว",
+        validators=[
+            DataRequired(),
+            NumberRange(min=0, max=5, message="คะแนนต้องอยู่ระหว่าง 0 ถึง 5"),
+        ],
+    )
+    submit = SubmitField("บันทึก")
+
+
+class ReviewForm(FlaskForm):
+    content = TextAreaField("รีวิว", validators=[DataRequired()])
+    rating = FloatField(
+        "คะแนนดาว",
+        validators=[
+            DataRequired(),
+            NumberRange(min=0, max=5, message="คะแนนต้องอยู่ระหว่าง 0 ถึง 5"),
+        ],
+    )
+    submit = SubmitField("ส่งรีวิว")
