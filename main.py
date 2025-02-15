@@ -371,5 +371,34 @@ def create_place():
     return render_template("create_place.html", form=form)
 
 
+@app.route("/add_review/<int:place_id>", methods=["GET", "POST"])
+@login_required
+def add_review(place_id):
+    form = forms.ReviewForm()
+    place = models.Place.query.get_or_404(place_id)  # ดึงข้อมูลสถานที่หรือแสดงหน้า 404 หากไม่พบ
+    db = models.db
+    if form.validate_on_submit():
+        # สร้างรีวิวใหม่
+        new_review = models.Review(
+            content=form.content.data,
+            rating=form.rating.data,
+            place_id=place_id,
+            user_id=current_user.id,  # ใช้ ID ของผู้ใช้ปัจจุบัน
+        )
+        db.session.add(new_review)
+        db.session.commit()
+
+        return redirect(url_for("place_detail", place_id=place_id))
+
+    return render_template("add_review.html", form=form, place=place)
+
+
+@app.route("/place_detail/<int:place_id>")
+def place_detail(place_id):
+    place = models.Place.query.get_or_404(place_id)  # ดึงข้อมูลสถานที่หรือแสดงหน้า 404 หากไม่พบ
+
+    return render_template("place_detail.html", place=place)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
