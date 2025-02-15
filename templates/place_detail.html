@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container my-5">
+    <h1 class="mb-4">{{ place.name }}</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ place.image }}" class="img-fluid rounded" alt="{{ place.name }}">
+        </div>
+        <div class="col-md-6">
+            <p>{{ place.description }}</p>
+            <p><strong>คะแนนเฉลี่ย:</strong> {{ place.rating }}</p>
+            <a href="{{ url_for('add_review', place_id=place.id) }}" class="btn btn-primary">เขียนรีวิว</a>
+        </div>
+    </div>
+
+    <h2 class="mt-5">รีวิว</h2>
+    {% for review in place.reviews %}
+    <div class="card my-3">
+        <div class="card-body">
+            <p class="card-text">{{ review.content }}</p>
+            <p class="text-muted">คะแนน: {{ review.rating }} ดาว</p>
+            
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

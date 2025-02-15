@@ -36,7 +36,7 @@
 
                     <!-- รีวิว -->
                     <div class="mb-3">
-                        <strong>รีวิว:</strong>
+                        <a href="{{ url_for('add_review', place_id=place.id) }}">รีวิว</a>
                         <ul class="list-unstyled">
                             {% for review in place.reviews %}
                             <li>
