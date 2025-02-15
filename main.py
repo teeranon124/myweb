@@ -387,7 +387,7 @@ def add_review(place_id):
         )
         db.session.add(new_review)
         db.session.commit()
-
+        place.update_average_rating()
         return redirect(url_for("place_detail", place_id=place_id))
 
     return render_template("add_review.html", form=form, place=place)

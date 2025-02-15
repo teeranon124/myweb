@@ -137,6 +137,15 @@ class Place(db.Model):
     created_date = db.Column(db.DateTime, default=func.now())
     updated_date = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
     reviews = db.relationship("Review", backref="place", lazy=True)  # หนึ่งสถานที่มีหลายรีวิว
+    average_rating = db.Column(db.Float, default=0.0)  # คะแนนเฉลี่ย
+
+    def update_average_rating(self):
+        if self.reviews:
+            total_rating = sum(review.rating for review in self.reviews)
+            self.average_rating = total_rating / len(self.reviews)
+        else:
+            self.average_rating = 0.0
+        db.session.commit()
 
 
 class Review(db.Model):
