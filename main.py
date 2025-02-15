@@ -14,11 +14,12 @@ models.init_app(app)
 
 @app.route("/")
 def index():
-    db = models.db
-    notes = db.session.execute(
-        db.select(models.Note).order_by(models.Note.title)
-    ).scalars()
-    return flask.render_template("index.html", notes=notes)
+    page = request.args.get("page", 1, type=int)  # รับค่าหน้าปัจจุบันจาก URL
+    per_page = 6  # จำนวนสถานที่ต่อหน้า
+    places = models.Place.query.paginate(
+        page=page, per_page=per_page
+    )  # ดึงข้อมูลสถานที่แบบแบ่งหน้า
+    return render_template("index.html", places=places)
 
 
 @app.route("/detail")
@@ -244,6 +245,7 @@ def imageprofile():
     images = db.session.execute(
         db.select(models.Profile).order_by(models.Profile.filename)
     ).scalars()
+
     return flask.render_template(
         "images.html",
         images=images,
@@ -276,36 +278,42 @@ from flask_login import current_user
 
 @app.route("/uploadprofile", methods=["GET", "POST"])
 def uploadprofile():
-    user = models.User()
-    form = forms.ProfileForm()
     db = models.db
     if not current_user.is_authenticated:
         return redirect(url_for("login"))
-    if not form.validate_on_submit():
-        return render_template("upload.html", form=form)
 
-    if form.file.data:
-        # ตรวจสอบว่าผู้ใช้มีไฟล์โปรไฟล์อยู่แล้วหรือไม่
-        if current_user.profile:
-            # ถ้ามีแล้ว ให้อัปเดตไฟล์เดิม
+    form = forms.ProfileForm()
+    if form.validate_on_submit():
+        if form.file.data:
             profile = current_user.profile
-            profile.filename = form.file.data.filename
-            profile.data = form.file.data.read()
-        else:
-            # ถ้าไม่มี ให้สร้างไฟล์ใหม่
-            profile = models.Profile(
-                filename=form.file.data.filename,
-                data=form.file.data.read(),
-            )
-            db.session.add(profile)
+
+            if profile:
+                print(777)  # มีโปรไฟล์แล้ว
+                # อัปเดตโปรไฟล์ที่มีอยู่
+                profile.filename = form.file.data.filename
+                profile.data = form.file.data.read()
+            else:
+                print(555)  # ไม่มีโปรไฟล์, สร้างใหม่
+                # สร้างโปรไฟล์ใหม่
+                profile = models.Profile(
+                    filename=form.file.data.filename,
+                    data=form.file.data.read(),
+                )
+                db.session.add(profile)
+                current_user.profile = profile  # เชื่อมโยงโปรไฟล์กับผู้ใช้
+
+            # บันทึกการเปลี่ยนแปลงลงฐานข้อมูล
             db.session.commit()
 
-            # เชื่อมโยงไฟล์โปรไฟล์กับผู้ใช้
-            current_user.profile = profile
+            # รีเฟรชข้อมูล current_user หลังจาก commit เพื่อให้ข้อมูลถูกต้อง
+            db.session.refresh(current_user)
 
-        db.session.commit()
+            # ตรวจสอบว่าโปรไฟล์อัปเดตหรือไม่
+            print(f"Updated profile filename: {profile.filename}")
 
-    return redirect(url_for("index"))
+            return redirect(url_for("index"))
+
+    return render_template("upload.html", form=form)
 
 
 @app.route("/upload/<int:file_id>", methods=["GET"])
@@ -340,6 +348,27 @@ def get_imageprofile(file_id):
             "Content-Type": "application/octet-stream",
         },
     )
+
+
+@app.route("/create_place", methods=["GET", "POST"])
+@login_required
+def create_place():
+    form = forms.PlaceForm()
+    db = models.db
+    if form.validate_on_submit():
+        # สร้างสถานที่ใหม่
+        new_place = models.Place(
+            name=form.name.data,
+            description=form.description.data,
+            image=form.image.data,
+            rating=form.rating.data,
+        )
+        db.session.add(new_place)
+        db.session.commit()
+
+        return redirect(url_for("index"))
+
+    return render_template("create_place.html", form=form)
 
 
 if __name__ == "__main__":
