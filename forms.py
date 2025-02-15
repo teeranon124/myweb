@@ -96,3 +96,21 @@ class UploadForm(BaseUploadForm):
             file.FileAllowed(["png", "jpg", "jpeg"], "You can use onlyjpg , png"),
         ],
     )
+
+
+# ฟอร์มสำหรับอัปโหลดโปรไฟล์
+BaseUploadProfileForm = model_form(
+    models.Profile,
+    base_class=FlaskForm,
+    db_session=models.db.session,
+    exclude=["created_date", "updated_date", "filename"],
+)
+
+
+class ProfileForm(BaseUploadProfileForm):
+    file = fields.FileField(
+        "Upload profile image (png or jpg)",
+        validators=[
+            file.FileAllowed(["png", "jpg", "jpeg"], "Only jpg and png are allowed"),
+        ],
+    )
