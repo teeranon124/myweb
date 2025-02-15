@@ -121,5 +121,32 @@ class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String)
     data = db.Column(db.LargeBinary)
-    created_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
-    updated_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
+
+
+from sqlalchemy import func
+from datetime import datetime
+
+
+class Place(db.Model):
+    __tablename__ = "places"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.Text)
+    image = db.Column(db.String)
+    rating = db.Column(db.Float)
+    created_date = db.Column(
+        db.DateTime, default=func.now()
+    )  # ใช้ func.now() เพื่อกำหนดค่าเริ่มต้น
+    updated_date = db.Column(
+        db.DateTime, default=func.now(), onupdate=func.now()
+    )  # อัปเดตอัตโนมัติเมื่อแก้ไข
+
+
+class Review(db.Model):
+    __tablename__ = "reviews"
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text)  # เนื้อหารีวิว
+    rating = db.Column(db.Float)  # คะแนนดาว (0-5)
+    place_id = db.Column(db.Integer, db.ForeignKey("places.id"))  # เชื่อมโยงกับสถานที่
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))  # เชื่อมโยงกับผู้ใช้
+    created_date = db.Column(db.DateTime, default=func.now())
