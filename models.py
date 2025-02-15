@@ -134,19 +134,18 @@ class Place(db.Model):
     description = db.Column(db.Text)
     image = db.Column(db.String)
     rating = db.Column(db.Float)
-    created_date = db.Column(
-        db.DateTime, default=func.now()
-    )  # ใช้ func.now() เพื่อกำหนดค่าเริ่มต้น
-    updated_date = db.Column(
-        db.DateTime, default=func.now(), onupdate=func.now()
-    )  # อัปเดตอัตโนมัติเมื่อแก้ไข
+    created_date = db.Column(db.DateTime, default=func.now())
+    updated_date = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
+    reviews = db.relationship("Review", backref="place", lazy=True)  # หนึ่งสถานที่มีหลายรีวิว
 
 
 class Review(db.Model):
     __tablename__ = "reviews"
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text)  # เนื้อหารีวิว
-    rating = db.Column(db.Float)  # คะแนนดาว (0-5)
-    place_id = db.Column(db.Integer, db.ForeignKey("places.id"))  # เชื่อมโยงกับสถานที่
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))  # เชื่อมโยงกับผู้ใช้
+    content = db.Column(db.Text)
+    rating = db.Column(db.Float)
+    place_id = db.Column(
+        db.Integer, db.ForeignKey("places.id")
+    )  # Foreign key ไปยัง places
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))  # Foreign key ไปยัง users
     created_date = db.Column(db.DateTime, default=func.now())
