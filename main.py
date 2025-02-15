@@ -238,6 +238,18 @@ def images():
     )
 
 
+@app.route("/profileimage")
+def imageprofile():
+    db = models.db
+    images = db.session.execute(
+        db.select(models.Profile).order_by(models.Profile.filename)
+    ).scalars()
+    return flask.render_template(
+        "images.html",
+        images=images,
+    )
+
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     form = forms.UploadForm()
@@ -258,10 +270,65 @@ def upload():
     return flask.redirect(flask.url_for("index"))
 
 
+from flask import Flask, request, redirect, url_for, render_template
+from flask_login import current_user
+
+
+@app.route("/uploadprofile", methods=["GET", "POST"])
+def uploadprofile():
+    user = models.User()
+    form = forms.ProfileForm()
+    db = models.db
+    if not current_user.is_authenticated:
+        return redirect(url_for("login"))
+    if not form.validate_on_submit():
+        return render_template("upload.html", form=form)
+
+    if form.file.data:
+        # ตรวจสอบว่าผู้ใช้มีไฟล์โปรไฟล์อยู่แล้วหรือไม่
+        if current_user.profile:
+            # ถ้ามีแล้ว ให้อัปเดตไฟล์เดิม
+            profile = current_user.profile
+            profile.filename = form.file.data.filename
+            profile.data = form.file.data.read()
+        else:
+            # ถ้าไม่มี ให้สร้างไฟล์ใหม่
+            profile = models.Profile(
+                filename=form.file.data.filename,
+                data=form.file.data.read(),
+            )
+            db.session.add(profile)
+            db.session.commit()
+
+            # เชื่อมโยงไฟล์โปรไฟล์กับผู้ใช้
+            current_user.profile = profile
+
+        db.session.commit()
+
+    return redirect(url_for("index"))
+
+
 @app.route("/upload/<int:file_id>", methods=["GET"])
 def get_image(file_id):
     # Query the database for the file with the given file_id
     file_ = models.Upload.query.get(file_id)
+    if not file_ or not file_.data:
+        # Return 404 if file is not found
+        abort(404, description="File not found")
+    # Serve the binary data as a file
+    return Response(
+        file_.data,
+        headers={
+            "Content-Disposition": f'inline;filename="{file_.filename}"',
+            "Content-Type": "application/octet-stream",
+        },
+    )
+
+
+@app.route("/upload/<int:file_id>", methods=["GET"])
+def get_imageprofile(file_id):
+    # Query the database for the file with the given file_id
+    file_ = models.Profile.query.get(file_id)
     if not file_ or not file_.data:
         # Return 404 if file is not found
         abort(404, description="File not found")

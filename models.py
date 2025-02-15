@@ -57,6 +57,8 @@ class User(db.Model, UserMixin):
     updated_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
 
     roles: Mapped[list[Role]] = relationship("Role", secondary="user_roles")
+    profile_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
+    profile = db.relationship("Profile", backref="user", uselist=False)
 
     # Password hash management
     @hybrid_property
@@ -121,11 +123,3 @@ class Profile(db.Model):
     data = db.Column(db.LargeBinary)
     created_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
     updated_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
-
-
-user_profile = db.Table(
-    "user_profile",
-    db.Model.metadata,
-    sa.Column("user_id", sa.ForeignKey("users.id"), primary_key=True),
-    sa.Column("profile_id", sa.ForeignKey("proflie.id"), primary_key=True),
-)
