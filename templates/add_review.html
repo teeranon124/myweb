@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container my-5">
+    <h1 class="mb-4">เขียนรีวิวสำหรับ {{ place.name }}</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows=5) }}
+        </div>
+        <div class="mb-3">
+            {{ form.rating.label(class="form-label") }}
+            {{ form.rating(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">ส่งรีวิว</button>
+    </form>
+</div>
+{% endblock %}
