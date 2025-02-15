@@ -12,15 +12,39 @@ integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIe
 crossorigin="anonymous"></script>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark text-center">
-<div class="mx-auto order-0" >
-<a class="navbar-brand mx-auto" href="{{ url_for('index') }}">{{ self.title() }}</a>
-</div>
+<nav class="navbar navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container-fluid">
+        <!-- ปุ่ม Toggler สำหรับเปิด Sidebar -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- "Hello PSU Note" อยู่ตรงกลาง -->
+        <a class="navbar-brand mx-auto fs-2 fw-bold" href="{{ url_for('index') }}">
+            {{ self.title() }}
+        </a>
+    </div>
 </nav>
-<div class="container">
-{% block body %}
-Default template
-{% endblock %}
+
+<!-- Sidebar -->
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebar">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title fw-bold">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="navbar-nav">
+            <a class="nav-link text-white py-2" href="{{ url_for('page') }}"> Page</a>
+            <a class="nav-link text-white py-2" href="{{ url_for('page2') }}"> Page 2</a>
+            <a class="nav-link text-white py-2" href="{{ url_for('upload') }}"> Upload</a>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    {% block body %}
+    Default template
+    {% endblock %}
 </div>
 </body>
 </html>
