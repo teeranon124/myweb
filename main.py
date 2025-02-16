@@ -5,6 +5,7 @@ from flask_login import login_required, login_user, logout_user, LoginManager
 from flask import render_template, redirect, url_for
 import acl
 from flask import Response, send_file, abort
+import io
 
 app = flask.Flask(__name__)
 app.config["SECRET_KEY"] = "This is secret key"
@@ -19,16 +20,24 @@ def index():
     places = models.Place.query.paginate(
         page=page, per_page=per_page
     )  # ดึงข้อมูลสถานที่แบบแบ่งหน้า
-    for i in places:
-        print(i.image)
     return render_template("index.html", places=places)
 
 
-@app.route("/detail")
+@app.route("/profile")
 @login_required
-def detail():
+def profile():
+    user = current_user
+    return render_template("profile.html", user=current_user)
 
-    return render_template("detail.html")
+
+@app.route("/profile_picture")
+@login_required
+def profile_picture():
+    if current_user.profile and current_user.profile.data:
+        return send_file(
+            io.BytesIO(current_user.profile.data), mimetype="image/jpeg"
+        )  # เปลี่ยน mimetype ถ้าจำเป็น
+    return "ไม่มีรูปโปรไฟล์", 404
 
 
 # หน้าเข้าสู่ระบบ
@@ -290,12 +299,10 @@ def uploadprofile():
             profile = current_user.profile
 
             if profile:
-                print(777)  # มีโปรไฟล์แล้ว
                 # อัปเดตโปรไฟล์ที่มีอยู่
                 profile.filename = form.file.data.filename
                 profile.data = form.file.data.read()
             else:
-                print(555)  # ไม่มีโปรไฟล์, สร้างใหม่
                 # สร้างโปรไฟล์ใหม่
                 profile = models.Profile(
                     filename=form.file.data.filename,
@@ -309,9 +316,6 @@ def uploadprofile():
 
             # รีเฟรชข้อมูล current_user หลังจาก commit เพื่อให้ข้อมูลถูกต้อง
             db.session.refresh(current_user)
-
-            # ตรวจสอบว่าโปรไฟล์อัปเดตหรือไม่
-            print(f"Updated profile filename: {profile.filename}")
 
             return redirect(url_for("index"))
 
@@ -397,7 +401,6 @@ def add_review(place_id):
 @app.route("/place_detail/<int:place_id>")
 def place_detail(place_id):
     place = models.Place.query.get_or_404(place_id)  # ดึงข้อมูลสถานที่หรือแสดงหน้า 404 หากไม่พบ
-
     return render_template("place_detail.html", place=place)
 
 

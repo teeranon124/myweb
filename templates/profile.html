@@ -1,10 +1,69 @@
 {% extends 'base.html' %}
+
 {% block body %}
-{% for image in images %}
-<div class="my-3">
-<img src="{{ url_for('get_imageprofile', file_id=image.id) }}"
-alt="Uploaded Image" style="width: 300px; height: 300px; object-fit:
-cover;">
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Profile</a>
+    </div>
+</nav>
+
+<div class="container my-5">
+    <div class="d-flex align-items-center">
+        <!-- แสดงรูปโปรไฟล์ -->
+        {% if user.profile and user.profile.data %}
+            <img src="{{ url_for('profile_picture', user_id=user.id) }}" alt="Profile Picture" 
+                 class="rounded-circle border border-3 border-light shadow object-fit-cover"
+                 width="150" height="150">
+        {% else %}
+            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
+                 style="width: 150px; height: 150px;">
+                <i class="bi bi-person fs-1"></i>  <!-- ไอคอนโปรไฟล์ -->
+            </div>
+        {% endif %}
+        
+        <h2 class="ms-4">{{ user.username }}</h2>
+    </div>
+
+    <hr>
+
+    <h3>สถานที่ที่เคยรีวิว</h3>
+    <div class="row">
+        {% set reviewed_places = {} %}
+        {% for review in user.reviews %}
+            {% if review.place.id not in reviewed_places %}
+                {% set _ = reviewed_places.update({review.place.id: True}) %}
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ review.place.image }}" class="card-img-top object-fit-cover" alt="{{ review.place.name }}" 
+                             style="height: 200px;">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.place.name }}</h5>
+                            <p class="card-text">{{ review.place.description }}</p>
+
+                            <div class="mb-3">
+                                <strong>คะแนนที่คุณให้:</strong> 
+                                {% for i in range(1, 6) %}
+                                    {% if i <= review.rating %}
+                                        <span class="text-warning">★</span>
+                                    {% else %}
+                                        <span class="text-secondary">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                                ({{ review.rating }} ดาว)
+                            </div>
+
+                            <a href="{{ url_for('place_detail', place_id=review.place.id) }}" class="btn btn-sm btn-primary">
+                                ดูสถานที่
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+    </div>
 </div>
-{% endfor %}
+
 {% endblock %}

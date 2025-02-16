@@ -59,6 +59,7 @@ class User(db.Model, UserMixin):
     roles: Mapped[list[Role]] = relationship("Role", secondary="user_roles")
     profile_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
     profile = db.relationship("Profile", backref="user", uselist=False)
+    reviews = db.relationship("Review", backref="user", lazy=True)
 
     # Password hash management
     @hybrid_property

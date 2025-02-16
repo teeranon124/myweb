@@ -38,12 +38,18 @@
                     <div class="mb-3">
                         <a href="{{ url_for('add_review', place_id=place.id) }}">รีวิว</a>
                         <ul class="list-unstyled">
-                            {% for review in place.reviews %}
+                            {% for review in place.reviews[:3] %}
                             <li>
                                 <small>{{ review.content }} ({{ review.rating }} ดาว)</small>
                             </li>
                             {% endfor %}
                         </ul>
+                            <!-- แสดงปุ่มดูรีวิวทั้งหมดถ้ามีมากกว่า 3 รีวิว -->
+                            {% if place.reviews|length > 3 %}
+                            <a href="{{ url_for('place_detail', place_id=place.id) }}" class="btn btn-sm btn-primary">
+                                ดูรีวิวทั้งหมด
+                            </a>
+                            {% endif %}
                     </div>
                 </div>
 
