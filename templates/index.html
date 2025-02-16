@@ -25,13 +25,13 @@
                     <div class="mb-3">
                         <strong>คะแนน:</strong>
                         {% for i in range(1, 6) %}
-                            {% if i <= place.rating %}
+                            {% if i <= place.average_rating %}
                                 <span class="text-warning">★</span>
                             {% else %}
                                 <span class="text-secondary">★</span>
                             {% endif %}
                         {% endfor %}
-                        ({{ place.rating }})
+                        ({{ place.average_rating }})
                     </div>
 
                     <!-- รีวิว -->

@@ -30,57 +30,6 @@ class RegisterForm(BaseUserForm):
     )
 
 
-# ฟอร์มสำหรับโน้ต
-class TagListField(Field):
-    widget = widgets.TextInput()
-
-    def __init__(self, label="", validators=None, remove_duplicates=True, **kwargs):
-        super().__init__(label, validators, **kwargs)
-        self.remove_duplicates = remove_duplicates
-        self.data = []
-
-    def process_formdata(self, valuelist):
-        data = []
-        if valuelist:
-            data = [x.strip() for x in valuelist[0].split(",")]
-        if not self.remove_duplicates:
-            self.data = data
-            return
-        self.data = []
-        for d in data:
-            if d not in self.data:
-                self.data.append(d)
-
-    def _value(self):
-        if self.data:
-            return ", ".join(self.data)
-        else:
-            return ""
-
-
-BaseNoteForm = model_form(
-    models.Note,
-    base_class=FlaskForm,
-    exclude=["created_date", "updated_date"],
-    db_session=models.db.session,
-)
-
-BaseTagsForm = model_form(
-    models.Tag,
-    base_class=FlaskForm,
-    exclude=["created_date", "updated_date"],
-    db_session=models.db.session,
-)
-
-
-class NoteForm(BaseNoteForm):
-    tags = TagListField("Tags")
-
-
-class TagsForm(BaseTagsForm):
-    tags = TagListField("Tags")
-
-
 BaseUploadForm = model_form(
     models.Upload,
     base_class=FlaskForm,
@@ -125,13 +74,6 @@ class PlaceForm(FlaskForm):
     name = StringField("ชื่อสถานที่", validators=[DataRequired()])
     description = TextAreaField("คำอธิบาย")
     image = StringField("URL รูปภาพ", validators=[DataRequired()])
-    rating = FloatField(
-        "คะแนนดาว",
-        validators=[
-            DataRequired(),
-            NumberRange(min=0, max=5, message="คะแนนต้องอยู่ระหว่าง 0 ถึง 5"),
-        ],
-    )
     submit = SubmitField("บันทึก")
 
 

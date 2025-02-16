@@ -77,29 +77,6 @@ class User(db.Model, UserMixin):
         return any(role.name == role_name for role in self.roles)
 
 
-# โมเดล Tag
-class Tag(db.Model):
-    __tablename__ = "tags"
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(sa.String, nullable=False)
-    created_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
-
-
-# โมเดล Note
-class Note(db.Model):
-    __tablename__ = "notes"
-    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True)
-    title: Mapped[str] = mapped_column(sa.String, nullable=False)
-    description: Mapped[str] = mapped_column(sa.Text)
-    tags: Mapped[list[Tag]] = relationship(secondary=note_tag_m2m)
-    created_date = mapped_column(sa.DateTime(timezone=True), server_default=func.now())
-    updated_date = mapped_column(
-        sa.DateTime(timezone=True),
-        server_default=func.now(),
-        server_onupdate=func.now(),
-    )
-
-
 # ตารางกลางสำหรับการเชื่อมโยงผู้ใช้และบทบาท
 user_roles = db.Table(
     "user_roles",
@@ -123,17 +100,12 @@ class Profile(db.Model):
     data = db.Column(db.LargeBinary)
 
 
-from sqlalchemy import func
-from datetime import datetime
-
-
 class Place(db.Model):
     __tablename__ = "places"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text)
     image = db.Column(db.String)
-    rating = db.Column(db.Float)
     created_date = db.Column(db.DateTime, default=func.now())
     updated_date = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
     reviews = db.relationship("Review", backref="place", lazy=True)  # หนึ่งสถานที่มีหลายรีวิว
