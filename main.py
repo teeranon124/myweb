@@ -14,6 +14,7 @@ models.init_app(app)
 
 
 @app.route("/")
+@login_required
 def index():
     page = request.args.get("page", 1, type=int)  # รับค่าหน้าปัจจุบันจาก URL
     per_page = 6  # จำนวนสถานที่ต่อหน้า
