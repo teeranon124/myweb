@@ -20,7 +20,9 @@ def index():
     places = models.Place.query.paginate(
         page=page, per_page=per_page
     )  # ดึงข้อมูลสถานที่แบบแบ่งหน้า
-    return render_template("index.html", places=places)
+    reviews = models.Review.query.all()  # ดึงข้อมูลรีวิวทั้งหมด รวมถึง user ที่รีวิว
+
+    return render_template("index.html", places=places, reviews=reviews)
 
 
 @app.route("/profile")
@@ -36,6 +38,17 @@ def profile_picture():
     if current_user.profile and current_user.profile.data:
         return send_file(
             io.BytesIO(current_user.profile.data), mimetype="image/jpeg"
+        )  # เปลี่ยน mimetype ถ้าจำเป็น
+    return "ไม่มีรูปโปรไฟล์", 404
+
+
+@app.route("/profile_review/<int:user_id>")
+@login_required
+def profile_review(user_id):
+    user = models.User.query.get(user_id)
+    if user and user.profile and user.profile.data:
+        return send_file(
+            io.BytesIO(user.profile.data), mimetype="image/jpeg"
         )  # เปลี่ยน mimetype ถ้าจำเป็น
     return "ไม่มีรูปโปรไฟล์", 404
 

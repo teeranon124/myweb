@@ -10,9 +10,10 @@
     <div class="row">
         {% for place in places %}
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm">
                 <!-- รูปภาพสถานที่ -->
-                <img src="{{ place.image }}" class="card-img-top" alt="{{ place.name }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ place.image }}" class="card-img-top object-fit-cover" 
+                     alt="{{ place.name }}" style="height: 200px;">
 
                 <div class="card-body">
                     <!-- ชื่อสถานที่ -->
@@ -39,17 +40,32 @@
                         <a href="{{ url_for('add_review', place_id=place.id) }}">รีวิว</a>
                         <ul class="list-unstyled">
                             {% for review in place.reviews[:3] %}
-                            <li>
-                                <small>{{ review.content }} ({{ review.rating }} ดาว)</small>
+                            <li class="d-flex align-items-center">
+                                <!-- รูปโปรไฟล์ผู้รีวิว -->
+                                {% if review.user.profile and review.user.profile.data %}
+                                    <img src="{{ url_for('profile_review', user_id=review.user.id) }}" 
+                                         class="rounded-circle border border-2 border-light shadow object-fit-cover me-2"
+                                         width="30" height="30">
+                                {% else %}
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2"
+                                         style="width: 30px; height: 30px;">
+                                        <i class="bi bi-person"></i> <!-- ไอคอน -->
+                                    </div>
+                                {% endif %}
+
+                                <small>
+                                    <strong>{{ review.user.username }}:</strong> 
+                                    {{ review.content }} ({{ review.rating }} ดาว)
+                                </small>
                             </li>
                             {% endfor %}
                         </ul>
-                            <!-- แสดงปุ่มดูรีวิวทั้งหมดถ้ามีมากกว่า 3 รีวิว -->
-                            {% if place.reviews|length > 3 %}
-                            <a href="{{ url_for('place_detail', place_id=place.id) }}" class="btn btn-sm btn-primary">
-                                ดูรีวิวทั้งหมด
-                            </a>
-                            {% endif %}
+                        <!-- ปุ่มดูรีวิวทั้งหมด -->
+                        {% if place.reviews|length > 3 %}
+                        <a href="{{ url_for('place_detail', place_id=place.id) }}" class="btn btn-sm btn-primary">
+                            ดูรีวิวทั้งหมด
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
 
