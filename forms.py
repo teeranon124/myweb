@@ -88,11 +88,4 @@ class PlaceForm(FlaskForm):
 
 class ReviewForm(FlaskForm):
     content = TextAreaField("รีวิว", validators=[DataRequired()])
-    rating = FloatField(
-        "คะแนนดาว",
-        validators=[
-            DataRequired(),
-            NumberRange(min=0, max=5, message="คะแนนต้องอยู่ระหว่าง 0 ถึง 5"),
-        ],
-    )
     submit = SubmitField("ส่งรีวิว")

@@ -57,6 +57,17 @@ def profile_review(user_id):
     return "ไม่มีรูปโปรไฟล์", 404
 
 
+@app.route("/profile_post/<int:user_id>")
+@login_required
+def profile_post(user_id):
+    user = models.User.query.get(user_id)
+    if user and user.profile and user.profile.data:
+        return send_file(
+            io.BytesIO(user.profile.data), mimetype="image/jpeg"
+        )  # เปลี่ยน mimetype ถ้าจำเป็น
+    return "ไม่มีรูปโปรไฟล์", 404
+
+
 # หน้าเข้าสู่ระบบ
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -335,7 +346,6 @@ def uploadprofile():
     return render_template("upload.html", form=form)
 
 
-# ลบหรือเปลี่ยนชื่อเส้นทางที่ซ้ำกัน
 @app.route("/upload/<int:file_id>", methods=["GET"])
 def get_upload_image(file_id):
     # Query the database for the file with the given file_id
@@ -353,7 +363,6 @@ def get_upload_image(file_id):
     )
 
 
-# เปลี่ยนชื่อเส้นทางที่ซ้ำกัน
 @app.route("/uploadprofile/<int:file_id>", methods=["GET"])
 def get_profile_image(file_id):
     # Query the database for the file with the given file_id
@@ -395,6 +404,7 @@ def create_place():
         new_place = models.Place(
             name=form.name.data,
             description=form.description.data,
+            user_id=current_user.id,  # บันทึก user_id ของผู้ที่เพิ่มสถานที่
         )
         db.session.add(new_place)
         db.session.commit()
@@ -422,13 +432,11 @@ def add_review(place_id):
         # สร้างรีวิวใหม่
         new_review = models.Review(
             content=form.content.data,
-            rating=form.rating.data,
             place_id=place_id,
             user_id=current_user.id,  # ใช้ ID ของผู้ใช้ปัจจุบัน
         )
         db.session.add(new_review)
         db.session.commit()
-        place.update_average_rating()
         return redirect(url_for("place_detail", place_id=place_id))
 
     return render_template("add_review.html", form=form, place=place)
