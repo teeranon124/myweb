@@ -29,14 +29,6 @@ def init_app(app):
         db.reflect()
 
 
-# ตารางกลางสำหรับความสัมพันธ์ Many-to-Many ระหว่าง Note และ Tag
-note_tag_m2m = db.Table(
-    "note_tag",
-    sa.Column("note_id", sa.ForeignKey("notes.id"), primary_key=True),
-    sa.Column("tag_id", sa.ForeignKey("tags.id"), primary_key=True),
-)
-
-
 # โมเดล Role
 class Role(db.Model):
     __tablename__ = "roles"

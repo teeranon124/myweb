@@ -1,17 +1,74 @@
 {% extends 'base.html' %}
 {% block body %}
-<div>
-<form method="post" enctype="multipart/form-data">
-<div>
-{{ form.hidden_tag() }}
-{{ form.file }}
-</div>
-<div>
-{{ form.file.label }}
-</div>
-<div>
-<button type="submit"> upload </button>
-</div>
-</form>
+<style>
+    .upload-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh; /* ทำให้กล่องอยู่ตรงกลางโดยไม่กินพื้นที่ 100% */
+        padding: 20px;
+    }
+
+    .upload-container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .upload-container h3 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .custom-file-upload {
+        display: block;
+        border: 2px dashed #409ef1;
+        padding: 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        background: rgba(104, 182, 231, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .custom-file-upload:hover {
+        background: rgba(98, 210, 255, 0.2);
+    }
+
+    .btn-upload {
+        background-color: #80ccef;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 8px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-upload:hover {
+        background-color: #0814fb;
+    }
+</style>
+
+<div class="upload-wrapper">
+    <div class="upload-container">
+        <h3>📸 อัปโหลดรูปความทรงจำของคุณ</h3>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <label class="custom-file-upload">
+                {{ form.file(style="display: none;") }}
+                <span>เลือกไฟล์ที่ต้องการอัปโหลด</span>
+            </label>
+            <div style="margin-top: 15px;">
+                <button type="submit" class="btn-upload">🚀 อัปโหลดเลย!</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
