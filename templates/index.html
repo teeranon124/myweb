@@ -79,7 +79,7 @@
 
                     <!-- รีวิว -->
                     <div class="mb-3">
-                        <a href="{{ url_for('add_review', place_id=place.id) }}">รีวิว</a>
+                        <a href="{{ url_for('place_detail', place_id=place.id) }}">รีวิว</a>
                         <ul class="list-unstyled">
                             {% for review in place.reviews[:3] %}
                             <li class="d-flex align-items-center">
@@ -105,12 +105,6 @@
                             </li>
                             {% endfor %}
                         </ul>
-                        <!-- ปุ่มดูรีวิวทั้งหมด -->
-                        {% if place.reviews|length > 3 %}
-                        <a href="{{ url_for('place_detail', place_id=place.id) }}" class="btn btn-sm btn-primary">
-                            ดูรีวิวทั้งหมด
-                        </a>
-                        {% endif %}
                     </div>
                 </div>
 

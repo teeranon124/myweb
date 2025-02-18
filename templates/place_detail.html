@@ -71,8 +71,8 @@
                         style="width: 30px; height: 30px;">
                     <i class="bi bi-person"></i> <!-- ไอคอน -->
                 </div>
+                
             {% endif %}
-            <h5 class="card-title">{{ reviews[0].user.username }}</h5>
             {% for review in reviews %}
                 <p class="card-text">{{ review.content }}</p>
             {% endfor %}
