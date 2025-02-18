@@ -51,34 +51,25 @@
 
     <h2 class="mt-5">คอมเมนต์</h2>
     {% for review in place.reviews %}
-    <div class="card my-3">
-        <!-- รีวิว -->
-        <div class="mb-3">
-            <ul class="list-unstyled">
-                {% for review in place.reviews[:3] %}
-                <li class="d-flex align-items-center">
-                    <!-- รูปโปรไฟล์ผู้รีวิว -->
-                    {% if review.user.profile and review.user.profile.data %}
-                        <img src="{{ url_for('profile_review', user_id=review.user.id) }}" 
-                                class="rounded-circle border border-2 border-light shadow object-fit-cover me-2"
-                                width="30" height="30">
-                    {% else %}
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2"
-                                style="width: 30px; height: 30px;">
-                            <i class="bi bi-person"></i> <!-- ไอคอน -->
-                        </div>
-                    {% endif %}
-                    <small>
-                        <strong>{{ review.user.username }}:</strong> 
-                        {{ review.content }} 
-                        {% set rating = review.user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
-                        <!-- {% if rating %}
-                            ({{ rating }} ดาว)
-                        {% endif %} -->
-                    </small>
-                </li>
-                {% endfor %}
-            </ul>
+    <div class="card my-3">    
+        <div class="card-body">
+            <!-- รูปโปรไฟล์ผู้รีวิว -->
+            {% if review.user.profile and review.user.profile.data %}
+                <img src="{{ url_for('profile_review', user_id=review.user.id) }}" 
+                     class="rounded-circle border border-2 border-light shadow object-fit-cover me-2"
+                     width="30" height="30">
+            {% else %}
+                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2"
+                     style="width: 30px; height: 30px;">
+                    <i class="bi bi-person"></i> <!-- ไอคอน -->
+                </div>
+            {% endif %}
+            <h5 class="card-title">{{ review.user.username }}</h5>
+            <p class="card-text">{{ review.content }}</p>
+            {% set rating = review.user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
+            {% if rating %}
+                <p class="text-muted">คะแนน: {{ rating }} ดาว</p>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
