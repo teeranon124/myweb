@@ -93,21 +93,39 @@ class Profile(db.Model):
     data = db.Column(db.LargeBinary)
 
 
+class PlaceImage(db.Model):
+    __tablename__ = "place_images"
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String)
+    data = db.Column(db.LargeBinary)
+    place_id = db.Column(db.Integer, db.ForeignKey("places.id"))
+
+
+class Rating(db.Model):
+    __tablename__ = "ratings"
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    place_id = db.Column(db.Integer, db.ForeignKey("places.id"))
+    created_date = db.Column(db.DateTime, default=func.now())
+
+
 class Place(db.Model):
     __tablename__ = "places"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text)
-    image = db.Column(db.String)
     created_date = db.Column(db.DateTime, default=func.now())
     updated_date = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
-    reviews = db.relationship("Review", backref="place", lazy=True)  # หนึ่งสถานที่มีหลายรีวิว
-    average_rating = db.Column(db.Float, default=0.0)  # คะแนนเฉลี่ย
+    reviews = db.relationship("Review", backref="place", lazy=True)
+    images = db.relationship("PlaceImage", backref="place", lazy=True)
+    ratings = db.relationship("Rating", backref="place", lazy=True)
+    average_rating = db.Column(db.Float, default=0.0)  # เพิ่มฟิลด์ average_rating
 
     def update_average_rating(self):
-        if self.reviews:
-            total_rating = sum(review.rating for review in self.reviews)
-            self.average_rating = total_rating / len(self.reviews)
+        if self.ratings:
+            total_rating = sum(rating.rating for rating in self.ratings)
+            self.average_rating = total_rating / len(self.ratings)
         else:
             self.average_rating = 0.0
         db.session.commit()

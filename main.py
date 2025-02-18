@@ -6,6 +6,9 @@ from flask import render_template, redirect, url_for
 import acl
 from flask import Response, send_file, abort
 import io
+from flask import Flask, request, redirect, url_for, render_template, Response, abort
+from flask_login import current_user
+
 
 app = flask.Flask(__name__)
 app.config["SECRET_KEY"] = "This is secret key"
@@ -297,10 +300,6 @@ def upload():
     return flask.redirect(flask.url_for("index"))
 
 
-from flask import Flask, request, redirect, url_for, render_template
-from flask_login import current_user
-
-
 @app.route("/uploadprofile", methods=["GET", "POST"])
 def uploadprofile():
     db = models.db
@@ -336,8 +335,9 @@ def uploadprofile():
     return render_template("upload.html", form=form)
 
 
+# ลบหรือเปลี่ยนชื่อเส้นทางที่ซ้ำกัน
 @app.route("/upload/<int:file_id>", methods=["GET"])
-def get_image(file_id):
+def get_upload_image(file_id):
     # Query the database for the file with the given file_id
     file_ = models.Upload.query.get(file_id)
     if not file_ or not file_.data:
@@ -353,8 +353,9 @@ def get_image(file_id):
     )
 
 
-@app.route("/upload/<int:file_id>", methods=["GET"])
-def get_imageprofile(file_id):
+# เปลี่ยนชื่อเส้นทางที่ซ้ำกัน
+@app.route("/uploadprofile/<int:file_id>", methods=["GET"])
+def get_profile_image(file_id):
     # Query the database for the file with the given file_id
     file_ = models.Profile.query.get(file_id)
     if not file_ or not file_.data:
@@ -370,21 +371,42 @@ def get_imageprofile(file_id):
     )
 
 
+# เส้นทางสำหรับดึงรูปภาพของสถานที่
+@app.route("/get_image/<int:file_id>", methods=["GET"])
+def get_place_image(file_id):
+    file_ = models.PlaceImage.query.get(file_id)
+    if not file_ or not file_.data:
+        abort(404, description="File not found")
+    return Response(
+        file_.data,
+        headers={
+            "Content-Disposition": f'inline;filename="{file_.filename}"',
+            "Content-Type": "image/jpeg",
+        },
+    )
+
+
 @app.route("/create_place", methods=["GET", "POST"])
 @login_required
 def create_place():
     form = forms.PlaceForm()
     db = models.db
     if form.validate_on_submit():
-        # สร้างสถานที่ใหม่
         new_place = models.Place(
             name=form.name.data,
             description=form.description.data,
-            image=form.image.data,
         )
         db.session.add(new_place)
         db.session.commit()
 
+        for file in form.images.data:
+            if file:
+                new_image = models.PlaceImage(
+                    filename=file.filename, data=file.read(), place_id=new_place.id
+                )
+                db.session.add(new_image)
+
+        db.session.commit()
         return redirect(url_for("index"))
 
     return render_template("create_place.html", form=form)
@@ -416,6 +438,29 @@ def add_review(place_id):
 def place_detail(place_id):
     place = models.Place.query.get_or_404(place_id)  # ดึงข้อมูลสถานที่หรือแสดงหน้า 404 หากไม่พบ
     return render_template("place_detail.html", place=place)
+
+
+@app.route("/rate_place/<int:place_id>", methods=["POST"])
+@login_required
+def rate_place(place_id):
+    db = models.db
+    rating_value = request.form.get("rating")
+    place = models.Place.query.get_or_404(place_id)
+    existing_rating = models.Rating.query.filter_by(
+        user_id=current_user.id, place_id=place_id
+    ).first()
+
+    if existing_rating:
+        existing_rating.rating = rating_value
+    else:
+        new_rating = models.Rating(
+            rating=rating_value, user_id=current_user.id, place_id=place_id
+        )
+        db.session.add(new_rating)
+
+    db.session.commit()
+    place.update_average_rating()
+    return redirect(url_for("place_detail", place_id=place_id))
 
 
 if __name__ == "__main__":

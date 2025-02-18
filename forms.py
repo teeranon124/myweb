@@ -1,8 +1,7 @@
 from wtforms_sqlalchemy.orm import model_form
 from flask_wtf import FlaskForm
 from wtforms import Field, widgets, validators, fields
-import models
-from flask_wtf import FlaskForm, file
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import (
     StringField,
     TextAreaField,
@@ -11,6 +10,7 @@ from wtforms import (
     MultipleFileField,
 )
 from wtforms.validators import DataRequired, NumberRange
+import models
 
 
 # ฟอร์มการลงทะเบียนและเข้าสู่ระบบ
@@ -51,7 +51,7 @@ class UploadForm(BaseUploadForm):
     file = fields.FileField(
         "Upload team image (png or jpg) , Recommended image size:250(px) x 230(px)",
         validators=[
-            file.FileAllowed(["png", "jpg", "jpeg"], "You can use onlyjpg , png"),
+            FileAllowed(["png", "jpg", "jpeg"], "You can use onlyjpg , png"),
         ],
     )
 
@@ -66,10 +66,10 @@ BaseUploadProfileForm = model_form(
 
 
 class ProfileForm(BaseUploadProfileForm):
-    file = fields.FileField(
+    file = FileField(
         "Upload profile image (png or jpg)",
         validators=[
-            file.FileAllowed(["png", "jpg", "jpeg"], "Only jpg and png are allowed"),
+            FileAllowed(["png", "jpg", "jpeg"], "Only jpg and png are allowed"),
         ],
     )
 
@@ -80,7 +80,7 @@ class PlaceForm(FlaskForm):
     images = MultipleFileField(
         "อัปโหลดรูปภาพ",
         validators=[
-            file.FileAllowed(["jpg", "png", "jpeg"], "Only jpg and png are allowed")
+            FileAllowed(["jpg", "png", "jpeg"], "Only jpg and png are allowed")
         ],
     )
     submit = SubmitField("บันทึก")

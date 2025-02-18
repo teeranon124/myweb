@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <div class="container my-5">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="mb-3">
             {{ form.name.label(class="form-label") }}
@@ -12,8 +12,8 @@
             {{ form.description(class="form-control") }}
         </div>
         <div class="mb-3">
-            {{ form.image.label(class="form-label") }}
-            {{ form.image(class="form-control") }}
+            {{ form.images.label(class="form-label") }}
+            {{ form.images(class="form-control") }}
         </div>
         <button type="submit" class="btn btn-primary">บันทึก</button>
     </form>
