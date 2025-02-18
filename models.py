@@ -52,7 +52,10 @@ class User(db.Model, UserMixin):
     profile_id = db.Column(db.Integer, db.ForeignKey("profile.id"))
     profile = db.relationship("Profile", backref="user", uselist=False)
     reviews = db.relationship("Review", backref="user", lazy=True)
-    places = db.relationship("Place", backref="user", lazy=True)  # เพิ่มความสัมพันธ์กับ Place
+    places = db.relationship("Place", backref="user", lazy=True)
+    ratings = db.relationship(
+        "Rating", backref="user", lazy=True
+    )  # เพิ่มความสัมพันธ์กับ Rating
 
     # Password hash management
     @hybrid_property
@@ -121,8 +124,8 @@ class Place(db.Model):
     reviews = db.relationship("Review", backref="place", lazy=True)
     images = db.relationship("PlaceImage", backref="place", lazy=True)
     ratings = db.relationship("Rating", backref="place", lazy=True)
-    average_rating = db.Column(db.Float, default=0.0)  # เพิ่มฟิลด์ average_rating
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))  # เพิ่มฟิลด์ user_id
+    average_rating = db.Column(db.Float, default=0.0)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     def update_average_rating(self):
         if self.ratings:

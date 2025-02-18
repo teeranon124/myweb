@@ -94,10 +94,13 @@
                                         <i class="bi bi-person"></i> <!-- ไอคอน -->
                                     </div>
                                 {% endif %}
-
                                 <small>
                                     <strong>{{ review.user.username }}:</strong> 
-                                     ดาว
+                                    {{ review.content }} 
+                                    {% set rating = review.user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
+                                    <!-- {% if rating %}
+                                        ({{ rating }} ดาว)
+                                    {% endif %} -->
                                 </small>
                             </li>
                             {% endfor %}
