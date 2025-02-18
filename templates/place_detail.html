@@ -54,7 +54,6 @@
     <div class="card my-3">
         <!-- รีวิว -->
         <div class="mb-3">
-            <a href="{{ url_for('add_review', place_id=place.id) }}">รีวิว</a>
             <ul class="list-unstyled">
                 {% for review in place.reviews[:3] %}
                 <li class="d-flex align-items-center">
