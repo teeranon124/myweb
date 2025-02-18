@@ -3,6 +3,15 @@ from flask_wtf import FlaskForm
 from wtforms import Field, widgets, validators, fields
 import models
 from flask_wtf import FlaskForm, file
+from wtforms import (
+    StringField,
+    TextAreaField,
+    FloatField,
+    SubmitField,
+    MultipleFileField,
+)
+from wtforms.validators import DataRequired, NumberRange
+
 
 # ฟอร์มการลงทะเบียนและเข้าสู่ระบบ
 BaseUserForm = model_form(
@@ -65,15 +74,15 @@ class ProfileForm(BaseUploadProfileForm):
     )
 
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FloatField, SubmitField
-from wtforms.validators import DataRequired, NumberRange
-
-
 class PlaceForm(FlaskForm):
     name = StringField("ชื่อสถานที่", validators=[DataRequired()])
     description = TextAreaField("คำอธิบาย")
-    image = StringField("URL รูปภาพ", validators=[DataRequired()])
+    images = MultipleFileField(
+        "อัปโหลดรูปภาพ",
+        validators=[
+            file.FileAllowed(["jpg", "png", "jpeg"], "Only jpg and png are allowed")
+        ],
+    )
     submit = SubmitField("บันทึก")
 
 
