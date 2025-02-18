@@ -50,23 +50,33 @@
     </div>
 
     <h2 class="mt-5">คอมเมนต์</h2>
+    {% set grouped_reviews = {} %}
     {% for review in place.reviews %}
+        {% if review.user.id not in grouped_reviews %}
+            {% set _ = grouped_reviews.update({review.user.id: []}) %}
+        {% endif %}
+        {% set _ = grouped_reviews[review.user.id].append(review) %}
+    {% endfor %}
+
+    {% for user_id, reviews in grouped_reviews.items() %}
     <div class="card my-3">    
         <div class="card-body">
             <!-- รูปโปรไฟล์ผู้รีวิว -->
-            {% if review.user.profile and review.user.profile.data %}
-                <img src="{{ url_for('profile_review', user_id=review.user.id) }}" 
-                     class="rounded-circle border border-2 border-light shadow object-fit-cover me-2"
-                     width="30" height="30">
+            {% if reviews[0].user.profile and reviews[0].user.profile.data %}
+                <img src="{{ url_for('profile_review', user_id=reviews[0].user.id) }}" 
+                        class="rounded-circle border border-2 border-light shadow object-fit-cover me-2"
+                        width="30" height="30">
             {% else %}
                 <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2"
-                     style="width: 30px; height: 30px;">
+                        style="width: 30px; height: 30px;">
                     <i class="bi bi-person"></i> <!-- ไอคอน -->
                 </div>
             {% endif %}
-            <h5 class="card-title">{{ review.user.username }}</h5>
-            <p class="card-text">{{ review.content }}</p>
-            {% set rating = review.user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
+            <h5 class="card-title">{{ reviews[0].user.username }}</h5>
+            {% for review in reviews %}
+                <p class="card-text">{{ review.content }}</p>
+            {% endfor %}
+            {% set rating = reviews[0].user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
             {% if rating %}
                 <p class="text-muted">คะแนน: {{ rating }} ดาว</p>
             {% endif %}
