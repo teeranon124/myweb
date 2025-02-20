@@ -19,10 +19,17 @@ crossorigin="anonymous"></script>
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- "Hello PSU Note" อยู่ตรงกลาง -->
+        <!-- "Traveling" อยู่ตรงกลาง -->
         <a class="navbar-brand mx-auto fs-2 fw-bold" href="{{ url_for('index') }}">
             {{ self.title() }}
         </a>
+
+        <!-- ปุ่ม Logout ทางด้านขวา -->
+        {% if current_user.is_authenticated %}
+        <form class="d-flex" action="{{ url_for('logout') }}" method="POST">
+            <button class="btn btn-outline-light" type="submit">Logout</button>
+        </form>
+        {% endif %}
     </div>
 </nav>
 

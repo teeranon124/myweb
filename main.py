@@ -6,7 +6,7 @@ from flask import render_template, redirect, url_for
 import acl
 from flask import Response, send_file, abort
 import io
-from flask import Flask, request, redirect, url_for, render_template, Response, abort
+from flask import request, redirect, url_for, render_template, Response, abort
 from flask_login import current_user
 
 
@@ -85,7 +85,7 @@ def login():
 
 
 # หน้าออกจากระบบ
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 @login_required
 def logout():
     logout_user()
@@ -114,18 +114,6 @@ def register():
     models.db.session.commit()
 
     return redirect(url_for("index"))
-
-
-@app.route("/page")
-@acl.roles_required("admin")
-def page():
-    return flask.render_template("page.html")
-
-
-@app.route("/page2")
-@login_required
-def page2():
-    return flask.render_template("page_2.html")
 
 
 # @app.route("/tags/<tag_name>")
