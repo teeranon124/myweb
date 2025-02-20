@@ -29,7 +29,7 @@
     <h3><a href="{{ url_for('view_review') }}">สถานที่ที่เคยรีวิว</a></h3>
     <div class="row">
         {% set reviewed_places = [] %}
-        {% for review in user.reviews %}
+        {% for review in user.reviews[:3][::-1] %}
             {% if review.place.id not in reviewed_places %}
                 {% set _ = reviewed_places.append(review.place.id) %}
             {% endif %}
@@ -96,7 +96,7 @@
 
     <h3><a href="{{ url_for('view_review') }}">สถานที่ที่โพสต์</a></h3>
     <div class="row">
-        {% for place in user.places %}
+        {% for place in user.places[:3][::-1] %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <a href="{{ url_for('place_detail', place_id=place.id) }}">
