@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="mb-4">สถานที่ที่โพสต์</h1>
+    <div class="row">
+        {% for place in user.places %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <!-- รูปภาพสถานที่ -->
+                    {% if place.images|length > 1 %}
+                    <div id="carouselExampleIndicators{{ place.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            {% for image in place.images %}
+                            <button type="button" data-bs-target="#carouselExampleIndicators{{ place.id }}" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index }}"></button>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                        <div class="carousel-inner">
+                            {% for image in place.images %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <img src="{{ url_for('get_place_image', file_id=image.id) }}" class="d-block w-100" alt="{{ place.name }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if place.images|length > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{ place.id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{ place.id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                        {% endif %}
+
+                    <div class="card-body">
+                        <!-- ชื่อสถานที่ -->
+                        <h5 class="card-title">{{ place.name }}</h5>
+
+                        <!-- คำอธิบายสถานที่ -->
+                        <p class="card-text">{{ place.description }}</p>
+
+                        <!-- คะแนนดาว -->
+                        <div class="mb-3">
+                            <strong>คะแนน:</strong>
+                            {% for i in range(1, 6) %}
+                                {% if i <= place.average_rating %}
+                                    <span class="text-warning">★</span>
+                                {% else %}
+                                    <span class="text-secondary">★</span>
+                                {% endif %}
+                            {% endfor %}
+                            ({{ place.average_rating }})
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
