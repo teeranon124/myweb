@@ -50,7 +50,7 @@
                         <div class="carousel-inner">
                             {% for image in place.images %}
                             <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                <img src="{{ url_for('get_place_image', file_id=image.id) }}" class="d-block w-100" alt="{{ place.name }}">
+                                <img src="{{ url_for('get_place_image', file_id=image.id) }}" class="d-block w-100 img-fluid" style="height: 200px; object-fit: cover;" alt="{{ place.name }}">
                             </div>
                             {% endfor %}
                         </div>
@@ -112,7 +112,7 @@
                         <div class="carousel-inner">
                             {% for image in place.images %}
                             <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                <img src="{{ url_for('get_place_image', file_id=image.id) }}" class="d-block w-100" alt="{{ place.name }}">
+                                <img src="{{ url_for('get_place_image', file_id=image.id) }}" class="d-block w-100 img-fluid" style="height: 200px; object-fit: cover;" alt="{{ place.name }}">
                             </div>
                             {% endfor %}
                         </div>
