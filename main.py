@@ -471,5 +471,19 @@ def rate_place(place_id):
     return redirect(url_for("place_detail", place_id=place_id))
 
 
+@app.route("/view_review")
+@login_required
+def view_review():
+    user = current_user
+    return render_template("view_review.html", user=user)
+
+
+@app.route("/view_post")
+@login_required
+def view_post():
+    user = current_user
+    return render_template("view_post.html", user=user)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
