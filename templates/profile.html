@@ -38,6 +38,7 @@
             {% set place = user.reviews | selectattr("place.id", "equalto", place_id) | map(attribute="place") | first %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
+                    <a href="{{ url_for('place_detail', place_id=place.id) }}">
                     <!-- รูปภาพสถานที่ -->
                     {% if place.images|length > 1 %}
                     <div id="carouselExampleIndicators{{ place.id }}" class="carousel slide" data-bs-ride="carousel">
@@ -68,9 +69,10 @@
 
                     <div class="card-body">
                         <!-- ชื่อสถานที่ -->
-                        <a href="{{ url_for('place_detail', place_id=place.id) }}">
+                        
                             <h5 class="card-title">{{ place.name }}</h5>
-                        </a>
+                    </a>
+                        
                         <!-- คำอธิบายสถานที่ -->
                         <p class="card-text">{{ place.description }}</p>
 
@@ -87,6 +89,7 @@
                             ({{ place.average_rating }})
                         </div>
                     </div>
+                    
                 </div>
             </div>
         {% endfor %}
