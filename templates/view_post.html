@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="container my-5">
-    <h1 class="mb-4">สถานที่ที่โพสต์</h1>
+    <h1 class="mb-4">Posted Places</h1>
     <div class="row">
         {% for place in user.places %}
             <div class="col-md-4 mb-4">
@@ -44,7 +44,7 @@
 
                         <!-- คะแนนดาว -->
                         <div class="mb-3">
-                            <strong>คะแนน:</strong>
+                            <strong>Rating:</strong>
                             {% for i in range(1, 6) %}
                                 {% if i <= place.average_rating %}
                                     <span class="text-warning">★</span>

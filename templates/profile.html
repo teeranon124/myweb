@@ -26,7 +26,7 @@
 
     <hr>
 
-    <h3><a href="{{ url_for('view_review') }}">สถานที่ที่เคยรีวิว</a></h3>
+    <h3><a href="{{ url_for('view_review') }}">Reviewed Places</a></h3>
     <div class="row">
         {% set reviewed_places = [] %}
         {% for review in user.reviews[:3][::-1] %}
@@ -78,7 +78,7 @@
 
                         <!-- คะแนนดาว -->
                         <div class="mb-3">
-                            <strong>คะแนน:</strong>
+                            <strong>Rating:</strong>
                             {% for i in range(1, 6) %}
                                 {% if i <= place.average_rating %}
                                     <span class="text-warning">★</span>
@@ -97,7 +97,7 @@
 
     <hr>
 
-    <h3><a href="{{ url_for('view_review') }}">สถานที่ที่โพสต์</a></h3>
+    <h3><a href="{{ url_for('view_review') }}">Posted Places</a></h3>
     <div class="row">
         {% for place in user.places[:3][::-1] %}
             <div class="col-md-4 mb-4">
@@ -141,7 +141,7 @@
 
                         <!-- คะแนนดาว -->
                         <div class="mb-3">
-                            <strong>คะแนน:</strong>
+                            <strong>Rating:</strong>
                             {% for i in range(1, 6) %}
                                 {% if i <= place.average_rating %}
                                     <span class="text-warning">★</span>

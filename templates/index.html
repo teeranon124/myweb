@@ -3,7 +3,7 @@
 <div class="container my-5">
     <!-- ปุ่มสร้างสถานที่ใหม่ -->
     <div class="text-center mb-4">
-        <a href="{{ url_for('create_place') }}" class="btn btn-primary">เพิ่มสถานที่ใหม่</a>
+        <a href="{{ url_for('create_place') }}" class="btn btn-primary">Add New Place</a>
     </div>
 
     <!-- แสดงการ์ดสถานที่ -->
@@ -62,12 +62,12 @@
 
                     <!-- ผู้ที่เพิ่มสถานที่ -->
                     <p class="card-text">
-                        <small class="text-muted">เพิ่มโดย: {{ place.user.username }}</small>
+                        <small class="text-muted">Added by: {{ place.user.username }}</small>
                     </p>
 
                     <!-- คะแนนดาว -->
                     <div class="mb-3">
-                        <strong>คะแนน:</strong>
+                        <strong>Rating:</strong>
                         {% for i in range(1, 6) %}
                             {% if i <= place.average_rating %}
                                 <span class="text-warning">★</span>
@@ -80,7 +80,7 @@
 
                     <!-- รีวิว -->
                     <div class="mb-3">
-                        <a href="{{ url_for('place_detail', place_id=place.id) }}">รีวิว</a>
+                        <a href="{{ url_for('place_detail', place_id=place.id) }}">Reviews</a>
                         <ul class="list-unstyled">
                             {% for review in place.reviews[:3] %}
                             <li class="d-flex align-items-center">

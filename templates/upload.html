@@ -58,17 +58,18 @@
 
 <div class="upload-wrapper">
     <div class="upload-container">
-        <h3>📸 อัปโหลดรูปโปรไฟล์</h3>
+        <h3>📸 Upload Profile Picture</h3>
         <form method="post" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <label class="custom-file-upload">
                 {{ form.file(style="display: none;") }}
-                <span>เลือกไฟล์ที่ต้องการอัปโหลด</span>
+                <span>Choose the file to upload</span>
             </label>
             <div style="margin-top: 15px;">
-                <button type="submit" class="btn-upload">🚀 อัปโหลดเลย!</button>
+                <button type="submit" class="btn-upload">🚀 Upload Now!</button>
             </div>
         </form>
     </div>
 </div>
+
 {% endblock %}
