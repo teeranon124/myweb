@@ -473,5 +473,80 @@ def view_post():
     return render_template("view_post.html", user=user)
 
 
+@app.route("/edit_place/<int:place_id>", methods=["GET", "POST"])
+@login_required
+def edit_place(place_id):
+    place = models.Place.query.get_or_404(place_id)
+    if place.user_id != current_user.id:
+        abort(403)  # Forbidden
+
+    form = forms.PlaceForm(obj=place)
+
+    if form.validate_on_submit():
+        # อัปเดตข้อมูลสถานที่
+        place.name = form.name.data
+        place.description = form.description.data
+
+        # เช็คว่ามีการอัปโหลดไฟล์ใหม่หรือไม่
+        if form.images.data:
+            # 🔹 ลบรูปเก่าออกจากฐานข้อมูลก่อน
+            models.PlaceImage.query.filter_by(place_id=place.id).delete()
+
+            # 🔹 อัปโหลดรูปใหม่
+            for image in form.images.data:
+                if image.filename:  # ตรวจสอบว่าไฟล์มีชื่อหรือไม่
+                    new_image = models.PlaceImage(
+                        filename=image.filename,
+                        data=image.read(),  # อ่านข้อมูลไบนารี
+                        place_id=place.id,
+                    )
+                    models.db.session.add(new_image)  # เพิ่มไฟล์รูปภาพลง DB
+
+        models.db.session.commit()
+        return redirect(url_for("profile"))
+
+    return render_template("edit_place.html", form=form, place=place)
+
+
+@app.route("/delete_place/<int:place_id>", methods=["POST"])
+@login_required
+def delete_place(place_id):
+    place = models.Place.query.get_or_404(place_id)
+    if place.user_id != current_user.id:
+        abort(403)  # Forbidden
+
+    models.db.session.delete(place)
+    models.db.session.commit()
+    return redirect(url_for("profile"))
+
+
+@app.route("/edit_review/<int:review_id>", methods=["GET", "POST"])
+@login_required
+def edit_review(review_id):
+    review = models.Review.query.get_or_404(review_id)
+    if review.user_id != current_user.id:
+        abort(403)  # Forbidden
+
+    form = forms.ReviewForm(obj=review)
+    if form.validate_on_submit():
+        form.populate_obj(review)
+        models.db.session.commit()
+        return redirect(url_for("profile"))
+
+    return render_template("edit_review.html", form=form, review=review)
+
+
+@app.route("/delete_review/<int:review_id>", methods=["POST"])
+@login_required
+def delete_review(review_id):
+    review = models.Review.query.get_or_404(review_id)
+    if review.user_id != current_user.id:
+        abort(403)  # Forbidden
+
+    models.db.session.delete(review)
+    models.db.session.commit()
+    return redirect(url_for("profile"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
