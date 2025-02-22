@@ -26,7 +26,9 @@ def index():
     )  # ดึงข้อมูลสถานที่แบบแบ่งหน้า
     reviews = models.Review.query.all()  # ดึงข้อมูลรีวิวทั้งหมด รวมถึง user ที่รีวิว
 
-    return render_template("index.html", places=places, reviews=reviews)
+    return render_template(
+        "index.html", places=places, reviews=reviews, user=current_user
+    )
 
 
 @app.route("/profile")
@@ -531,7 +533,7 @@ def edit_review(review_id):
     if form.validate_on_submit():
         form.populate_obj(review)
         models.db.session.commit()
-        return redirect(url_for("profile"))
+        return redirect(url_for("index"))
 
     return render_template("edit_review.html", form=form, review=review)
 

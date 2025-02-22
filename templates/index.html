@@ -97,7 +97,11 @@
                                 {% endif %}
                                 <small>
                                     <strong>{{ review.user.username }}:</strong> 
-                                    {{ review.content }} 
+                                        {% if user.is_authenticated and user.id == review.user.id %}
+                                            <a href="{{ url_for('edit_review', review_id=review.id) }}">{{ review.content }} </a>
+                                        {% else %}
+                                            {{ review.content }}
+                                        {% endif %}
                                     {% set rating = review.user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
                                     <!-- {% if rating %}
                                         ({{ rating }} ดาว)
