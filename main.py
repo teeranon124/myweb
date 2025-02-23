@@ -435,7 +435,7 @@ def add_review(place_id):
 @app.route("/place_detail/<int:place_id>")
 def place_detail(place_id):
     place = models.Place.query.get_or_404(place_id)  # ดึงข้อมูลสถานที่หรือแสดงหน้า 404 หากไม่พบ
-    return render_template("place_detail.html", place=place)
+    return render_template("place_detail.html", place=place, user=current_user)
 
 
 @app.route("/rate_place/<int:place_id>", methods=["POST"])

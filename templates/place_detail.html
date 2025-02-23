@@ -75,7 +75,13 @@
             {% endif %}
             <h5 class="card-title d-inline">{{ reviews[0].user.username }}</h5>
             {% for review in reviews %}
-                <p class="card-text">{{ review.content }}</p>
+                {% if user.is_authenticated and user.id == review.user.id %}
+                    <p class="card-text">
+                        <a href="{{ url_for('edit_review', review_id=review.id) }}">{{ review.content }}</a>
+                    </p>
+                {% else %}
+                    {{ review.content }}
+                {% endif %}
             {% endfor %}
             {% set rating = reviews[0].user.ratings | selectattr("place_id", "equalto", place.id) | map(attribute="rating") | first %}
             {% if rating %}
